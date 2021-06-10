@@ -21,7 +21,7 @@ router.get('/:id', async ({ params }, res) => {
   }
 });
 
-router.post('/', ({ body }, res) => {
+router.post('/', async ({ body }, res) => {
   const newTag = await Tag.create(body);
   res.json(newTag);
 });
