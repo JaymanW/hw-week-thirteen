@@ -3,25 +3,53 @@ const { Tag, Product, ProductTag } = require('../../models');
 
 // The `/api/tags` endpoint
 
-router.get('/', (req, res) => {
-  
+router.get('/', async (req, res) => {
+  const tags = await Tag.findAll({
+    include: [{model: Product, through: ProductTag}]
+  });
+  res.json(tags);
 });
 
-router.get('/:id', (req, res) => {
-  // find a single tag by its `id`
-  // be sure to include its associated Product data
+router.get('/:id', async ({ params }, res) => {
+  const tag = await Tag.findByPk(params.id, {
+    include: [{model: Product, through: ProductTag}]
+  });
+  if (tag == 'null') {
+    res.json('Tag not found');
+  } else {
+    res.json(tag);
+  }
 });
 
-router.post('/', (req, res) => {
-  // create a new tag
+router.post('/', ({ body }, res) => {
+  const newTag = await Tag.create(body);
+  res.json(newTag);
 });
 
-router.put('/:id', (req, res) => {
-  // update a tag's name by its `id` value
+router.put('/:id', async ({ body, params }, res) => {
+  const updateTag = await Tag.update(body, {
+    where: {
+      id: params.id
+    }
+  });
+  if (updateTag == 'null') {
+    res.json('Tag not found');
+  } else {
+    res.json(updateTag);
+  }
 });
 
-router.delete('/:id', (req, res) => {
-  // delete on tag by its `id` value
+router.delete('/:id', async ({ params }, res) => {
+  const deleteTag = await Tag.destroy({
+    where: {
+      id: params.id
+    }
+  });
+  if (deleteTag == 'null') {
+    res.json('Tag not found');
+  } else {
+    res.json(deleteTag);
+  }
 });
 
 module.exports = router;
